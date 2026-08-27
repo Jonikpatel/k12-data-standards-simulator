@@ -5,9 +5,8 @@
 -- shared across enrollment, attendance, and assessment facts.
 -- =====================================================================
 
--- ---------------------------------------------------------------------
+
 -- DIMENSION TABLES
--- ---------------------------------------------------------------------
 
 CREATE TABLE dim_district (
     district_key        INTEGER PRIMARY KEY,
@@ -47,9 +46,9 @@ CREATE TABLE dim_date (
     is_school_day       TEXT NOT NULL           -- Yes / No
 );
 
--- ---------------------------------------------------------------------
+
 -- FACT TABLES
--- ---------------------------------------------------------------------
+
 
 -- Grain: one row per student, per school, per school year
 CREATE TABLE fact_enrollment (
@@ -83,9 +82,9 @@ CREATE TABLE fact_assessment (
     scale_score            INTEGER NOT NULL
 );
 
--- ---------------------------------------------------------------------
+
 -- INDEXES to support common report filters (district, school, year)
--- ---------------------------------------------------------------------
+
 CREATE INDEX idx_enr_district ON fact_enrollment(district_key, school_year);
 CREATE INDEX idx_att_district ON fact_attendance(district_key, date_key);
 CREATE INDEX idx_asm_district ON fact_assessment(district_key, school_year, subject);
