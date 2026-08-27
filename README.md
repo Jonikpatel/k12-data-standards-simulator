@@ -39,34 +39,34 @@ k12-data-standards-simulator/
 ├── data_dictionary.md       # Grain definitions, schema docs, and governance rules
 ├── requirements.txt        # Project dependencies
 └── README.md
-
+```
 ---
 
 ### Getting Started
 
-1.Clone the repository
+1.**Clone the repository**
 
 Bash
 git clone [https://github.com/Jonikpatel/k12-data-standards-simulator.git](https://github.com/Jonikpatel/k12-data-standards-simulator.git)
 cd k12-data-standards-simulator
 
-2.Set up a virtual environment
+2.**Set up a virtual environment**
 
 Bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-3.Install dependencies
+3.**Install dependencies**
 
 Bash
 pip install -r requirements.txt
 
-4.Generate the database
+4.**Generate the database**
 
 Bash
 python data/generate_data.py
 
-5.Run the application
+5.**Run the application**
 
 Bash
 streamlit run app.py
@@ -74,8 +74,8 @@ streamlit run app.py
 
 ### Architecture & Design Decisions
 
-Conformed Star Schema: Distinct fact tables separate daily operational events (attendance), annual enrollment snapshots, and standardized assessment scoring while maintaining uniform dimensional joins.
+**Conformed Star Schema:** Distinct fact tables separate daily operational events (attendance), annual enrollment snapshots, and standardized assessment scoring while maintaining uniform dimensional joins.
 
-Denormalized district_key on Fact Tables: Placing district_key directly on all fact records allows row-level security predicates (WHERE district_key = @user_district) to execute immediately without joining dimension tables.
+**Denormalized district_key on Fact Tables:** Placing district_key directly on all fact records allows row-level security predicates (WHERE district_key = @user_district) to execute immediately without joining dimension tables.
 
-De-Identified Entity Modeling: Direct identifiers (names, dates of birth, street addresses) are excluded from dim_student, mirroring state warehouse architectures where student identities are managed in separate, restricted credential stores.
+**De-Identified Entity Modeling:** Direct identifiers (names, dates of birth, street addresses) are excluded from dim_student, mirroring state warehouse architectures where student identities are managed in separate, restricted credential stores.
