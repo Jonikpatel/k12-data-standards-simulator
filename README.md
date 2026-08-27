@@ -1,107 +1,81 @@
 # K-12 District Data Standards Simulator
 
-A synthetic, fully de-identified demo of the kind of multi-district
-reporting system a state education agency maintains — built to show
-how a governed data model, standardized reporting, and role-based
-access can work together, not just to show a dashboard.
+An end-to-end multi-district reporting system demonstration modeling state-level education agency reporting. Focuses on governed data modeling, conformed star schemas, standardized metric definitions, and simulated row-level security (RLS) across district and state roles.
 
-**No real student, school, or district data is used anywhere in this
-project.** All records are randomly generated (see `data/generate_data.py`).
+> **Note:** All student, school, and district records are synthetic and generated via `data/generate_data.py`. No real or personally identifiable information (PII) is used.
 
 ---
 
-## Why this project exists
+### Key Deliverables & Implementation
 
-Most portfolio dashboards show a chart. This one is built around a
-different question: **if a state agency needed to combine reporting
-from many independent districts into one trustworthy system, what
-would that actually require?**
+| Area | Component | Description |
+| :--- | :--- | :--- |
+| **Data Warehouse** | `sql/schema.sql` | Conformed star schema spanning enrollment, daily attendance, and annual assessment reporting grains. |
+| **Data Standards** | `data_dictionary.md` | Field definitions, primary/foreign key mappings, and accepted value sets for all dimensions and facts. |
+| **Access Control & RLS** | `app.py` | Role-based data access simulation enforcing tenant boundaries (District Admin vs. State Analyst). |
+| **Stakeholder Reporting** | `app.py` | State report card layout visualizing performance, demographic breakdowns, and school-level drill-downs. |
+| **Data Generation** | `data/generate_data.py` | Generates ~6,700 students across 5 districts and 25 schools with realistic demographic and attendance correlations. |
 
-That's a data-standards problem before it's a dashboard problem —
-which is the same framing behind systems like Kentucky's School Report
-Card and Infinite Campus extracts. So this project treats the data
-model, the documentation, and the access controls as first-class
-deliverables, alongside the dashboard itself.
+---
 
-## What it demonstrates
+### System Architecture & Roles
 
-| Capability | Where it shows up |
-|---|---|
-| Business requirements → data model | `sql/schema.sql` — a conformed star schema shared across enrollment, attendance, and assessment reporting |
-| Data standards & documentation | `data_dictionary.md` — every field, valid values, and grain defined |
-| Data governance / access control | `app.py` — a working row-level security simulation: a "District Admin" login only ever sees their own district's rows |
-| Stakeholder-ready reporting | The dashboard's KPI and drill-down layout mirrors a School Report Card: enrollment, attendance, and assessment performance by school |
-| Realistic synthetic data at scale | `data/generate_data.py` — ~6,700 students across 5 districts and 25 schools, with correlated (not random-looking) attendance and assessment patterns |
+1. **Shared Conformed Schema:** Fact tables (`fact_enrollment`, `fact_attendance`, `fact_assessment`) share conformed dimensions (`dim_district`, `dim_school`, `dim_student`, `dim_date`) ensuring standardized metric calculations across independent districts.
+2. **Role-Based Access Control:**
+   * **District Admin:** Scoped strictly to records matching their assigned district via partitioned filters.
+   * **State (KDE) Analyst:** Full access across all districts for cross-district comparisons, statewide aggregate trends, and policy reporting.
 
-## The scenario, in plain terms
+---
 
-Imagine five independent school districts all need to report into one
-state-level system. Each district admin should only ever see their own
-district's data. A state-level analyst needs to see everything, across
-all districts, to spot patterns and support policy decisions.
+### Project Structure
 
-This project builds that system end-to-end:
-
-1. **One shared data model** (`sql/schema.sql`) that every district's
-   data loads into consistently — so a "Proficient" score or an
-   "Absent-Excused" day means the same thing everywhere.
-2. **Synthetic but realistic data** (`data/generate_data.py`) standing
-   in for what would normally come from each district's student
-   information system.
-3. **A reporting layer** (`app.py`) with two roles:
-   - **District Admin** — sees only their district, exactly as row-level
-     security would enforce in a real multi-tenant reporting system.
-   - **State (KDE) Analyst** — sees all districts, for state-level
-     reporting and oversight.
-
-## Try it yourself
-
-```bash
-pip install -r requirements.txt
-python data/generate_data.py     # builds k12_simulator.db from scratch
-streamlit run app.py             # launches the dashboard
-```
-
-Then, in the sidebar, switch between **"District Admin"** (pick a
-district) and **"State (KDE) Analyst"** to see the row-level security
-in action — the same student, school, and district-level KPIs reflow
-to only the rows that role is allowed to see.
-
-## Project structure
-
-```
+```text
 k12-data-standards-simulator/
-├── app.py                  # Streamlit dashboard + row-level security logic
+├── app.py                  # Streamlit reporting UI & role-based filter logic
 ├── data/
-│   └── generate_data.py    # Synthetic data generator
+│   └── generate_data.py    # Synthetic dataset generator (~6,700 students)
 ├── sql/
-│   └── schema.sql          # Star-schema DDL with documentation comments
-├── data_dictionary.md       # Full field-level data dictionary + governance notes
-├── requirements.txt
+│   └── schema.sql          # Star-schema DDL and foreign key definitions
+├── data_dictionary.md       # Grain definitions, schema docs, and governance rules
+├── requirements.txt        # Project dependencies
 └── README.md
-```
 
-## Design decisions worth calling out
+---
 
-- **Star schema over a single flat table.** Enrollment, attendance,
-  and assessment are separate fact tables at different grains (per
-  year, per school day, per subject) sharing conformed dimensions —
-  the same pattern that keeps multi-source K-12 reporting internally
-  consistent as new fact types get added later.
-- **`district_key` denormalized onto every fact table.** This keeps
-  the row-level security check a single, simple filter on each fact
-  table, instead of requiring a join back through `dim_school` before
-  security can be enforced — simpler to audit and harder to
-  accidentally bypass.
-- **No direct identifiers in `dim_student`.** Name, date of birth, and
-  address are intentionally absent rather than masked — reflecting how
-  a real system would keep identity data in a separate,
-  access-controlled table joined only when explicitly authorized.
+### Getting Started
 
-## What I'd build next
+1.Clone the repository
 
-- A "data quality exceptions" view — flagging rows that fail the
-  fixed-value checks described in the data dictionary, so bad loads
-  get caught before they reach a report.
-- A year-over-year comparison view, once multiple `school_year`
-  values exist in the data.
+Bash
+git clone [https://github.com/Jonikpatel/k12-data-standards-simulator.git](https://github.com/Jonikpatel/k12-data-standards-simulator.git)
+cd k12-data-standards-simulator
+
+2.Set up a virtual environment
+
+Bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+3.Install dependencies
+
+Bash
+pip install -r requirements.txt
+
+4.Generate the database
+
+Bash
+python data/generate_data.py
+
+5.Run the application
+
+Bash
+streamlit run app.py
+
+
+### Architecture & Design Decisions
+
+Conformed Star Schema: Distinct fact tables separate daily operational events (attendance), annual enrollment snapshots, and standardized assessment scoring while maintaining uniform dimensional joins.
+
+Denormalized district_key on Fact Tables: Placing district_key directly on all fact records allows row-level security predicates (WHERE district_key = @user_district) to execute immediately without joining dimension tables.
+
+De-Identified Entity Modeling: Direct identifiers (names, dates of birth, street addresses) are excluded from dim_student, mirroring state warehouse architectures where student identities are managed in separate, restricted credential stores.
