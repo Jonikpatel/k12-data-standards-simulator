@@ -23,9 +23,9 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "k12_simulator.db")
 st.set_page_config(page_title="KY District Report Card Simulator", layout="wide")
 
 
-# ---------------------------------------------------------------------
+
 # Data access layer
-# ---------------------------------------------------------------------
+
 @st.cache_resource
 def get_connection():
     return sqlite3.connect(DB_PATH, check_same_thread=False)
@@ -91,9 +91,9 @@ def load_assessment_summary(district_keys):
     return pd.read_sql(q, conn, params=district_keys)
 
 
-# ---------------------------------------------------------------------
+
 # Row-Level Security simulation
-# ---------------------------------------------------------------------
+
 st.sidebar.title("🔐 Access Control")
 st.sidebar.caption("Simulates row-level security: district admins only ever query their own district's rows.")
 
@@ -109,9 +109,9 @@ else:
     allowed_district_keys = districts_df["district_key"].tolist()
     st.sidebar.info("State-level access: all districts visible")
 
-# ---------------------------------------------------------------------
+
 # Header
-# ---------------------------------------------------------------------
+
 st.title("📊 Kentucky District Report Card Simulator")
 st.caption(
     "A synthetic, fully de-identified demo modeled on state K-12 reporting systems "
@@ -122,9 +122,9 @@ enrollment_df = load_enrollment_summary(allowed_district_keys)
 attendance_df = load_attendance_summary(allowed_district_keys)
 assessment_df = load_assessment_summary(allowed_district_keys)
 
-# ---------------------------------------------------------------------
+
 # KPI row
-# ---------------------------------------------------------------------
+
 total_students = len(enrollment_df)
 active_rate = (enrollment_df["enrollment_status"] == "Active").mean() * 100 if total_students else 0
 attendance_rate = (attendance_df["attendance_status"] == "Present").mean() * 100 if len(attendance_df) else 0
@@ -138,9 +138,9 @@ k4.metric("Proficient or Distinguished", f"{proficient_rate:.1f}%")
 
 st.divider()
 
-# ---------------------------------------------------------------------
+
 # Charts
-# ---------------------------------------------------------------------
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -201,9 +201,9 @@ with col4:
 
 st.divider()
 
-# ---------------------------------------------------------------------
+
 # School-level detail table (mirrors a "Report Card" drill-down)
-# ---------------------------------------------------------------------
+
 st.subheader("School-Level Detail")
 if total_students:
     detail = (
