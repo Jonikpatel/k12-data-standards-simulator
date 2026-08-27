@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+k12_simulator.db
+*.log
+.streamlit/
