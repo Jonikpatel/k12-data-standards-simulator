@@ -55,7 +55,7 @@ def load_enrollment_summary(district_keys):
     conn = get_connection()
     placeholders = ",".join("?" * len(district_keys))
     q = f"""
-        SELECT s.district_key, sc.school_name, sc.school_level, st.grade_level,
+        SELECT e.district_key, sc.school_name, sc.school_level, st.grade_level,
                st.econ_disadvantaged, st.iep_status, st.ell_status, e.enrollment_status
         FROM fact_enrollment e
         JOIN dim_student st ON st.student_key = e.student_key
