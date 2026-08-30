@@ -1,7 +1,8 @@
 # K-12 District Data Standards Simulator
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://k12-data-standards-simulator-jonikpatel.streamlit.app/)
-
+[![PDF Report](https://img.shields.io/badge/PDF-Dashboard_Report-red?logo=adobeacrobatreader&logoColor=white)](./data/k-12-data-standars-simulator DASHBOARD.pdf)
+data/k-12-data-standars-simulator DASHBOARD.pdf
 An end-to-end multi-district reporting system demonstration modeling state-level education agency reporting. Focuses on governed data modeling, conformed star schemas, standardized metric definitions, and simulated row-level security (RLS) across district and state roles.
 
 > **Note:** All student, school, and district records are synthetic and generated via `data/generate_data.py`. No real or personally identifiable information (PII) is used.
